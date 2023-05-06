@@ -17,134 +17,16 @@
     <script src="appjs/moment.js"></script>
 </head>
 
-<body  class="layui-layout-body">
-    <style>
-        .layui-row {
-            padding: 10px;
-            padding-top: 0;
-        }
-    </style>
-    <div style="background:#fff;">
-        <form class="layui-form layui-form-pane" action="" lay-filter="formmain">
-            <blockquote class="layui-elem-quote" style="padding:10px">
-               保质期计算
-            </blockquote>
-            <div class="layui-row">
-                <div class="layui-col-md10 layui-col-xs10">
-                    <label class="layui-form-label">输入日期</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="rq" id="rq" lay-verify="required" autocomplete="off" class="layui-input" value="" placeholder="日期格式：20220101">
-                    </div>
-                </div>
-                <div class="layui-col-md2 layui-col-xs2">
-                    <button type="button" class="layui-btn  layui-btn-fluid" lay-filter="compu" lay-submit>计算</button>
-                </div>
-            </div>
-            <div class="layui-row">
-                <div class="layui-col-md8 layui-col-xs8">
-                    <label class="layui-form-label">保质期</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="bzq" id="bzq" lay-verify="number" autocomplete="off" class="layui-input" value="" placeholder="" >
-                    </div>
-                </div>
-                <div class="layui-col-md4 layui-col-xs4">
-                    <div class="layui-inline">
-                        <select name="bzqstr" lay-filter="aihao">
-                            <option value="days">天</option>
-                            <option value="months">个月</option>
-                            @*<option value="years">年</option>*@
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-row">
-                <div class="layui-inline" style="font-size:18px">
-                   <p id="scrq"></p>
-                    <p id="gqrq"></p>
-                    <p id="cgrq"></p>
-                    <p id="dqts"></p>
-    
-                </div>
-            </div>
-          
-        </form>
-    </div>
-    <script>
-      
-        layui.use(['form'], function () {
-            var form = layui.form, $ = layui.$
-            var todaystr = moment().format('YYYYMMDD');
-            $('#rq').val(todaystr)
-            form.on('submit(compu)', function (data) {
-                var d = data.field
-                if (!moment(d.rq).isValid()) {
-                    layer.msg('输入的日期不正确!')
-                    return;
-                }
-                var rq = moment(d.rq).format('YYYY-MM-DD');
-                var today = moment().format('YYYY-MM-DD');
-               
-                var scrq, gqrq,cgrq,bzqts;
-                if (rq > today) {
-                    scrq = moment(rq).add(-d.bzq, d.bzqstr).format('YYYY-MM-DD');
-                    gqrq = rq;
-                } else {
-                    scrq = rq;
-                    gqrq = moment(rq).add(d.bzq, d.bzqstr).format('YYYY-MM-DD');
-                }
-               
-                gqrq = moment(gqrq).add(-1, 'days').format('YYYY-MM-DD');
-    
-                var bzqts = moment(gqrq).diff(scrq, 'day');
-        
-                if (bzqts <= 2) {
-                    cgrq = gqrq;
-                }
-                if (bzqts >= 3 && bzqts <= 10) {
-                    cgrq = moment(gqrq).add(-1, d.bzqstr).format('YYYY-MM-DD');
-                }
-                if (bzqts >= 11 && bzqts <= 21) {
-                    cgrq = moment(gqrq).add(-3, d.bzqstr).format('YYYY-MM-DD');;
-                }
-                if (bzqts >= 22) {
-                    if (d.bzqstr == "months" && d.bzq < 6) {
-                        d.bzq = d.bzq * 30
-                        d.bzqstr="days"
-                    }
-                    cgrq = moment(gqrq).add(-Math.trunc(d.bzq / 6), d.bzqstr).format('YYYY-MM-DD');
-                }
-                
-                $("#scrq").html("生产日期：" + scrq);
-                $("#gqrq").html("到期日期：" + gqrq);
-                $("#cgrq").html("撤柜日期：<span style='font-size:22px;color:#FF4500'>" + cgrq + "</span>");
-                //var dstr;
-                //if (d.bzqstr == "days") {
-                //    dstr="天"
-                //}
-                //if (d.bzqstr == "months") {
-                //    dstr = "个月"
-                //}
-                //if (d.bzqstr == "years") {
-                //    dstr = "年"
-                //}
-                //var dqts = moment(gqrq).diff(today, d.bzqstr);
-                //if (dqts > 0) {
-                //    $("#dqts").html("还有 " + dqts + " "+dstr+"过期!");
-                //} else {
-                //    $("#dqts").html("<span style='font-size:18px;color:#FF4500'>已过期 " + (-dqts) + " "+dstr+"!</span>");
-                //}
-                
-                return false;
-            });
-           
-        });
-    
-    
-    </script>
-    
-    
-    
-    
+<body class="layui-layout-body">
+<div id="bzqjs">
+
+</div>
+   
+
+
 </body>
 
 </html>
+<script>
+    layui.$('#bzqjs').load('bzqjs.html');
+</script>
